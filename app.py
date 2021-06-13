@@ -21,7 +21,7 @@ from bs4 import BeautifulSoup
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 credential = ServiceAccountCredentials.from_json_keyfile_name('linedatekey.json', scope)
 gc = gspread.authorize(credential)
-SPREADSHEET_KEY = '1qNbXmDgiPhIsFhwPQc8Cdl3a86pMYP6hcb1wdIqcHGU'
+SPREADSHEET_KEY = 'キー'
 workbook=gc.open_by_key(SPREADSHEET_KEY)
 worksheet1 = workbook.worksheet('sheet1')
 worksheet3 = workbook.worksheet('sheet3')
@@ -30,8 +30,8 @@ follow = workbook.worksheet('追加時')
 
 app = Flask(__name__)
 
-line_bot_api = LineBotApi('R7g5A7r20FrklSmHx4qXkAlvpvJ38/1F0dup3hUY9Ugukgpx5SfZw6ZtxokxHYrQ3BaJHCWMx2JrdkjdpanbRUV3XfRYD82wnnKAJR5j1qa9f98lXns4jWE/iP1ja/c+ciFHO4w8091el9VKC68YOgdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('e7c97bfba9f56d72a4e72530912310e6')
+line_bot_api = LineBotApi('チャンネルアクセストークン')
+handler = WebhookHandler('ID')
 
 
 @app.route("/callback", methods=['POST'])
