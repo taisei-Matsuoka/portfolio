@@ -1,0 +1,352 @@
+var ACCESS_TOKEN ="アクセストークン";
+
+
+var spreadsheet = SpreadsheetApp.openById("ID");
+
+//公式ラインの 全員に対して送信
+function broadcast() {
+  var sheetname= spreadsheet.getSheetByName("sheet2");
+  var range = sheetname.getRange('B2');
+  var text = range.getValue();
+
+  UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + ACCESS_TOKEN,
+    },
+    payload: JSON.stringify({
+      
+      
+      messages: [
+        {
+            type: 'text',
+            text: text
+        },
+      ]
+    }),
+  });
+};
+
+// 個人送信　＊今後ループで複数
+function pushMessage() {
+  var sheetname= spreadsheet.getSheetByName("米");
+  var rangeid = sheetname.getRange('B2');
+  var id =rangeid.getValue();
+  var textcontent = sheetname.getRange('A2');
+  var text = textcontent.getValue();
+  var postData = {
+    "to": id,
+    "messages": [{
+      "type": "text",
+      "text": text,
+    }]
+  };
+
+  var url = "https://api.line.me/v2/bot/message/push";
+  var headers = {
+    "Content-Type": "application/json",
+    'Authorization': 'Bearer ' + ACCESS_TOKEN,
+  };
+
+  var options = {
+    "method": "post",
+    "headers": headers,
+    "payload": JSON.stringify(postData)
+  };
+  var response = UrlFetchApp.fetch(url, options);
+}
+
+// 公式ラインの友達追加で個人データの重複を削除
+function samedelate(){
+  var sheetname= spreadsheet.getSheetByName("sheet1");
+  var range =sheetname.getRange("A:C")
+  range.removeDuplicates([3]);
+}
+
+// 定期発信のボタン型のタロットメッセージ
+function tarott_imagemap(){
+  var sheet=spreadsheet.getSheetByName('タロット');
+  var lastrow = sheet.getLastRow(); 
+  for(i =2; i<=7; i++ ){
+    var rand = Math.ceil(Math.random() * (lastrow-1)) + 1;
+    var url = sheet.getRange(rand,1).getValue();
+    var url1 = sheet.getRange(i,3).setValue(url)
+  }
+
+  UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + ACCESS_TOKEN,
+    },
+    payload: JSON.stringify({
+      
+      
+      messages: [
+        {
+      "type": "imagemap",
+      "baseUrl": "https://pearch-634.com/wp-content/themes/musashi-wp/images/tarot",
+      "altText": "今週の武蔵タロットコーナー",
+      "baseSize": {
+          "width": 1040,
+          "height": 1040
+      },
+      "actions": [
+          {
+          "type": "message",
+          "area": {
+              "x": 56,
+              "y": 126,
+              "width": 255,
+              "height": 370
+          },
+          "text": "1"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 404,
+              "y": 128,
+              "width": 242,
+              "height": 365
+          },
+          "text": "2"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 722,
+              "y": 120,
+              "width": 253,
+              "height": 367
+          },
+          "text": "3"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 71,
+              "y": 569,
+              "width": 251,
+              "height": 363
+          },
+          "text": "4"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 390,
+              "y": 549,
+              "width": 258,
+              "height": 375
+          },
+          "text": "5"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 738,
+              "y": 557,
+              "width": 237,
+              "height": 357
+          },
+          "text": "6"
+      }
+      ]
+      }
+      ]
+    }),
+  });
+}
+//　テキストメッセージを収集している中で、必要のない情報（タロットのテキストメッセージ）を削除
+// function delateABCD(){
+//   var sheet = spreadsheet.getSheetByName('sheet3');
+//   var range = sheet.getRange("C2:C");
+//   var lastRow =sheet.getLastRow();
+//   var rule = SpreadsheetApp.newConditionalFormatRule()
+//     .whenTextEqualTo("A")
+//     .whenTextEqualTo("B")
+//     .whenTextEqualTo("C")
+//     .whenTextEqualTo("D")
+//     .whenTextEqualTo("E")
+//     .whenTextEqualTo("F")
+//     .whenTextEqualTo("アンケート回答")
+//     .setRanges([range])
+//     .build()
+//   var rules = sheet.getConditionalFormatRules();
+//   rules.push(rule);
+//   sheet.setConditionalFormatRules(rules);
+// }
+
+
+//　テキストメッセージを収集している中で、必要のない情報（タロットのテキストメッセージ）を削除
+// function number(){
+//   var sheet = spreadsheet.getSheetByName("sheet3");
+//   var lastRow = sheet.getLastRow();
+//   var lastcolumn = sheet.getLastColumn();
+//   var range = sheet.getRange(lastRow,lastcolumn);
+//   var nuwvalue =range.getValue().replace(/[０-９]/g, function(s) {
+//     return String.fromCharCode(s.charCodeAt(0) - 65248);
+//   });
+//   range.setValue(nuwvalue);
+//   for(i = nuwvalue; i<=lastRow; i++){
+//     if (i = '1','2','3','4','5','6'){
+//       const sheet = SpreadsheetApp.getActiveSheet();
+//       sheet.deleteRows(lastRow);
+//       break
+//     } 
+//   }
+//   // valueが１，２，３，４，５，６だとその列を削除　lastRowの列をDelateRow
+// }
+
+
+// アンケート回答時にNotifyに通知
+var LINE_NOTIFY_TOKEN = "token";
+var LINE_NOTIFY_API = "https://notify-api.line.me/api/notify";
+
+function sendLineMessage(msg) {
+  var response = UrlFetchApp.fetch(LINE_NOTIFY_API, {
+    "method": "post",
+    "headers": {
+      "Authorization": "Bearer " + LINE_NOTIFY_TOKEN
+    },
+    "payload": {
+      "message": msg
+    }
+  });
+}
+
+
+//google form にアンケートが解答された際に、アンケート内容を取得しLineで通知する
+function sendSpMsg() {
+  var sheet = spreadsheet.getSheetByName("form");
+  var row = sheet.getLastRow();
+  var name = sheet.getRange(row,2).getValue();
+  var teleohone = sheet.getRange(row,3).getValue();
+  var gender = sheet.getRange(row,4).getValue();
+  var purose = sheet.getRange(row,5).getValue();
+  var line_id = sheet.getRange(row,6).getValue();
+
+  sendLineMessage('名前:  '+name+ '\n'　+ 
+  '電話番号:  '+teleohone+ '\n' + 
+  'ラインID:  '+line_id+ '\n' + 
+  '性別:  '+gender);
+}
+
+
+// タロットのカードをA列全体をシャッフル
+function shuffleMembers(){
+  var sheet = spreadsheet.getSheetByName('タロット');
+  // var invalue_last = sheet.getDataRange();
+  var ranges = sheet.getRange('A2:A11');
+  ranges.randomize()
+}
+
+
+function send_tarotto(){
+  var sheet =spreadsheet.getSheetByName('シート9');
+  var range = sheet.getRange('A2');
+  var  text = range.getValue();
+  UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + ACCESS_TOKEN,
+    },
+    payload: JSON.stringify({
+      
+      
+      messages: [
+        {
+            type: 'text',
+            text: text
+        },
+      ]
+    }),
+  });
+  UrlFetchApp.fetch('https://api.line.me/v2/bot/message/broadcast', {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + ACCESS_TOKEN,
+    },
+    payload: JSON.stringify({
+      
+      
+      messages: [
+        {
+      "type": "imagemap",
+      "baseUrl": "https://pearch-634.com/wp-content/themes/musashi-wp/images/tarot",
+      "altText": "今週の武蔵タロットコーナー",
+      "baseSize": {
+          "width": 1040,
+          "height": 1040
+      },
+      "actions": [
+          {
+          "type": "message",
+          "area": {
+              "x": 56,
+              "y": 126,
+              "width": 255,
+              "height": 370
+          },
+          "text": "1"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 404,
+              "y": 128,
+              "width": 242,
+              "height": 365
+          },
+          "text": "2"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 722,
+              "y": 120,
+              "width": 253,
+              "height": 367
+          },
+          "text": "3"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 71,
+              "y": 569,
+              "width": 251,
+              "height": 363
+          },
+          "text": "4"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 390,
+              "y": 549,
+              "width": 258,
+              "height": 375
+          },
+          "text": "5"
+          },
+          {
+          "type": "message",
+          "area": {
+              "x": 738,
+              "y": 557,
+              "width": 237,
+              "height": 357
+          },
+          "text": "6"
+      }
+      ]
+      }
+      ]
+    }),
+  });
+}
